@@ -79,6 +79,7 @@ export default function AppRoutes() {
           <Route path="users" element={<Users />} />
           <Route path="companies" element={<Companies />} />
           <Route path="jobs" element={<Jobs />} />
+          <Route path="jobs/:id" element={<JobDetails />} />
         </Route>
 
         {/* Company */}
