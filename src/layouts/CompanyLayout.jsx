@@ -19,7 +19,7 @@ export default function CompanyLayout() {
         <h1 className="text-xl font-bold mb-6">Company Panel</h1>
 
         <nav className="flex flex-col gap-4">
-          <Link to="/company" className="flex items-center gap-2 hover:text-green-400">
+          <Link to="/company/dashboard" className="flex items-center gap-2 hover:text-green-400">
             <LayoutDashboard size={18} /> Dashboard
           </Link>
 

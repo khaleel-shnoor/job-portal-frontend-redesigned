@@ -80,7 +80,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<CompanyDashboard />} />
+          <Route path="dashboard" element={<CompanyDashboard />} />
           <Route path="post-job" element={<PostJob />} />
           <Route path="jobs" element={<MyJobs />} />
           <Route path="applicants" element={<Applicants />} />
