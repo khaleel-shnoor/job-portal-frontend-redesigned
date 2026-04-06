@@ -1,10 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { jobs as dummyJobs, companies } from "../../data/dummyData";
+import { useAuth } from "../../context/AuthContext";
 
 export default function JobDetails() {
   // useParams extracts the dynamic part of the URL (the :id)
   const { id } = useParams();
+  const { user } = useAuth(); // Bring in the auth context to check roles
 
   const [job] = useState(() => {
     // 1. Find the job by ID 
@@ -18,7 +20,8 @@ export default function JobDetails() {
     return {
       ...foundJob,
       company: companyInfo ? companyInfo.name : "Unknown Company",
-      posted: "2 days ago"
+      posted: "2 days ago",
+      isActive: foundJob.isActive ?? true // Track if the job is active/taken down
     };
   });
 
@@ -36,7 +39,8 @@ export default function JobDetails() {
       
       {/* Back Button */}
       <div>
-        <Link to="/user/jobs" className="text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors text-sm font-semibold flex items-center gap-2">
+        {/* Dynamically link back to the correct dashboard based on role */}
+        <Link to={user?.role === "admin" ? "/admin/jobs" : "/user/jobs"} className="text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors text-sm font-semibold flex items-center gap-2">
           &larr; Back to jobs
         </Link>
       </div>
@@ -82,21 +86,30 @@ export default function JobDetails() {
               </div>
             </div>
             
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={() => setHasApplied(true)}
-                disabled={hasApplied}
-                className={`w-full py-4 font-bold rounded-xl shadow-sm text-lg transition-colors ${hasApplied ? "bg-[var(--color-secondary)] text-white cursor-not-allowed opacity-90" : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)]"}`}
-              >
-                {hasApplied ? "Applied ✓" : "Apply Now"}
-              </button>
-              <button 
-                onClick={() => setIsSaved(!isSaved)}
-                className={`w-full py-3 font-bold rounded-xl shadow-sm transition-colors border ${isSaved ? "bg-[var(--bg-secondary)] text-[var(--color-accent)] border-[var(--color-accent)]" : "bg-[var(--bg-primary)] text-[var(--color-primary)] border-[var(--border-color)] hover:border-[var(--color-primary)]"}`}
-              >
-                {isSaved ? "Saved ♥" : "Save Job ♡"}
-              </button>
-            </div>
+            {/* Render different buttons based on the user role */}
+            {user?.role === "admin" ? (
+              <div className="flex flex-col gap-3">
+                <button className={`w-full py-4 font-bold rounded-xl shadow-sm text-lg transition-colors border ${job.isActive ? 'bg-[var(--bg-primary)] text-red-500 border-red-500 hover:bg-red-500/10' : 'bg-[var(--bg-primary)] text-green-500 border-green-500 hover:bg-green-500/10'}`}>
+                  {job.isActive ? "Takedown Job" : "Restore Job"}
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => setHasApplied(true)}
+                  disabled={hasApplied}
+                  className={`w-full py-4 font-bold rounded-xl shadow-sm text-lg transition-colors ${hasApplied ? "bg-[var(--color-secondary)] text-white cursor-not-allowed opacity-90" : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)]"}`}
+                >
+                  {hasApplied ? "Applied ✓" : "Apply Now"}
+                </button>
+                <button 
+                  onClick={() => setIsSaved(!isSaved)}
+                  className={`w-full py-3 font-bold rounded-xl shadow-sm transition-colors border ${isSaved ? "bg-[var(--bg-secondary)] text-[var(--color-accent)] border-[var(--color-accent)]" : "bg-[var(--bg-primary)] text-[var(--color-primary)] border-[var(--border-color)] hover:border-[var(--color-primary)]"}`}
+                >
+                  {isSaved ? "Saved ♥" : "Save Job ♡"}
+                </button>
+              </div>
+            )}
           </div>
         </aside>
 
