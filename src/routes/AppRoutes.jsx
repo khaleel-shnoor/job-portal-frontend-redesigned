@@ -3,14 +3,13 @@ import { useAuth } from "../context/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 
 // layouts
-import MainLayout from "../layouts/MainLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import CompanyLayout from "../layouts/CompanyLayout";
+import UserLayout from "../pages/user/UserLayout";
 
 // pages
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import Home from "../pages/user/Home";
 import AdminDashboard from "../pages/admin/Dashboard";
 import CompanyDashboard from "../pages/company/Dashboard";
 import Users from "../pages/admin/Users";
@@ -20,6 +19,12 @@ import PostJob from "../pages/company/PostJob";
 import MyJobs from "../pages/company/MyJobs";
 import Applicants from "../pages/company/Applicants";
 import Landing from "../pages/public/Landing";
+import UserDashboard from "../pages/user/UserDashboard";
+import JobSearch from "../pages/user/JobSearch";
+import JobDetails from "../pages/user/JobDetails";
+import MyApplications from "../pages/user/MyApplications";
+import SavedJobs from "../pages/user/SavedJobs";
+import UserProfile from "../pages/user/UserProfile";
 
 function RoleRedirect() {
   const { user } = useAuth();
@@ -28,7 +33,7 @@ function RoleRedirect() {
 
   if (user.role === "admin") return <Navigate to="/admin" />;
   if (user.role === "company") return <Navigate to="/company" />;
-  return <Navigate to="/home" />;
+  return <Navigate to="/user" />;
 }
 
 export default function AppRoutes() {
@@ -46,14 +51,19 @@ export default function AppRoutes() {
 
         {/* User */}
         <Route
-          path="/home"
+          path="/user"
           element={
             <ProtectedRoute role="user">
-              <MainLayout />
+              <UserLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Home />} />
+          <Route index element={<UserDashboard />} />
+          <Route path="jobs" element={<JobSearch />} />
+          <Route path="jobs/:id" element={<JobDetails />} />
+          <Route path="applications" element={<MyApplications />} />
+          <Route path="saved" element={<SavedJobs />} />
+          <Route path="profile" element={<UserProfile />} />
         </Route>
 
         {/* Admin */}
