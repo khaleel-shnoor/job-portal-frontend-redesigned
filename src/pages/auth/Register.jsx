@@ -1,22 +1,35 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock } from "lucide-react";
+import api from "../../services/api";
+import { mapFrontendToBackend } from "../../utils/roleMap";
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+const [form, setForm] = useState({
+  name: "",
+  email: "",
+  password: "",
+  role: "user",
+});
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    // Dummy register
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    await api.post("/auth/register", {
+      ...form,
+      role: mapFrontendToBackend(form.role),
+    });
+
     navigate("/login");
-  };
+  } catch (err) {
+    console.log(err);
+    alert("Registration failed");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] px-4">
@@ -64,6 +77,14 @@ export default function Register() {
               required
             />
           </div>
+
+          <select
+          className="border border-[var(--border-color)] rounded-lg px-3 py-3 bg-transparent"
+          onChange={(e) => setForm({ ...form, role: e.target.value })}
+        >
+          <option value="user">User</option>
+          <option value="company">Company</option>
+        </select>
 
           {/* Button */}
           <button

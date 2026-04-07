@@ -24,7 +24,9 @@ import JobSearch from "../pages/user/JobSearch";
 import JobDetails from "../pages/user/JobDetails";
 import MyApplications from "../pages/user/MyApplications";
 import SavedJobs from "../pages/user/SavedJobs";
+import ApplyJob from "../pages/user/ApplyJob";
 import UserProfile from "../pages/user/UserProfile";
+import MainLayout from "../layouts/MainLayout";
 
 function RoleRedirect() {
   const { user } = useAuth();
@@ -58,12 +60,13 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<UserDashboard />} />
+       <Route index element={<Navigate to="/user/jobs" />} />
           <Route path="jobs" element={<JobSearch />} />
           <Route path="jobs/:id" element={<JobDetails />} />
           <Route path="applications" element={<MyApplications />} />
           <Route path="saved" element={<SavedJobs />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="apply/:id" element={<ApplyJob />} />
         </Route>
 
         {/* Admin */}
@@ -90,6 +93,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
+          <Route index element={<CompanyDashboard />} />
           <Route path="dashboard" element={<CompanyDashboard />} />
           <Route path="post-job" element={<PostJob />} />
           <Route path="jobs" element={<MyJobs />} />
