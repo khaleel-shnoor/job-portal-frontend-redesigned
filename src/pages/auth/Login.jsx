@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Mail, Lock } from "lucide-react";
+import api from "../../services/api";
+import { mapFrontendToBackend, mapBackendToFrontend } from "../../utils/roleMap";
 
 export default function Login() {
   const { login } = useAuth();
@@ -13,17 +15,34 @@ export default function Login() {
     role: "user",
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    login({
-      name: "Demo User",
-      role: form.role,
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await api.post("/auth/login", {
+      email: form.email,
+      password: form.password,
+      role: mapFrontendToBackend(form.role),
     });
 
-    navigate("/redirect");
-  };
+    const { user, token } = res.data;
 
+    login(
+      {
+        ...user,
+        role: mapBackendToFrontend(user.role),
+      },
+      token
+    );
+
+    navigate("/redirect");
+  } catch (err) {
+    console.log(err);
+    alert("Invalid credentials");
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--bg-secondary)] px-4">
       

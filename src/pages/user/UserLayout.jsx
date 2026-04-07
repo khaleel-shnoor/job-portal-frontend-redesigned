@@ -7,8 +7,7 @@ export default function UserLayout() {
   return (
     <div className="flex min-h-screen bg-[var(--bg-secondary)] text-[var(--text-primary)]">
       
-      {/* Sidebar Navigation */}
-      <aside className="w-64 bg-[var(--bg-primary)] border-r border-[var(--border-color)] p-6 flex flex-col">
+     <aside className="w-64 sticky top-0 h-screen bg-[var(--bg-primary)] border-r border-[var(--border-color)] p-6 flex flex-col">
         <div className="mb-10">
           <h2 className="text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">
             Shnoor International LLC
@@ -32,8 +31,6 @@ export default function UserLayout() {
             Saved Jobs
           </Link>
         </nav>
-
-        {/* Logout Button pushed to the bottom */}
         <div className="mt-auto pt-6 border-t border-[var(--border-color)]">
           <button 
             onClick={logout}
@@ -44,9 +41,8 @@ export default function UserLayout() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
+
       <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
-        {/* The Outlet is a placeholder for nested route components (like UserDashboard) */}
         <Outlet />
       </main>
       
