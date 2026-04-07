@@ -1,10 +1,17 @@
 import { useParams, Link } from "react-router-dom";
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+=======
+import { useState } from "react";
+import { jobs as dummyJobs, companies } from "../../data/dummyData";
+import { useAuth } from "../../context/AuthContext";
+>>>>>>> 1254ad9c4a731c8f55ec664191bc68947ee2abe8
 
 export default function JobDetails() {
   const { id } = useParams();
+<<<<<<< HEAD
   console.log("Job ID from URL:", id);
   const navigate = useNavigate();
 
@@ -12,6 +19,29 @@ export default function JobDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasApplied, setHasApplied] = useState(false); 
+=======
+  const { user } = useAuth(); // Bring in the auth context to check roles
+
+  const [job] = useState(() => {
+    // 1. Find the job by ID 
+    const foundJob = dummyJobs.find(j => j.id === parseInt(id));
+    if (!foundJob) return null;
+    
+    // 2. Find the company
+    const companyInfo = companies.find(c => c.id === foundJob.companyId);
+    
+    // 3. Merge them 
+    return {
+      ...foundJob,
+      company: companyInfo ? companyInfo.name : "Unknown Company",
+      posted: "2 days ago",
+      isActive: foundJob.isActive ?? true // Track if the job is active/taken down
+    };
+  });
+
+  // Mock states for interaction
+  const [hasApplied, setHasApplied] = useState(false);
+>>>>>>> 1254ad9c4a731c8f55ec664191bc68947ee2abe8
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
@@ -99,7 +129,8 @@ export default function JobDetails() {
     <div className="flex flex-col gap-8">
       {/* Back Button */}
       <div>
-        <Link to="/user/jobs" className="text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors text-sm font-semibold flex items-center gap-2">
+        {/* Dynamically link back to the correct dashboard based on role */}
+        <Link to={user?.role === "admin" ? "/admin/jobs" : "/user/jobs"} className="text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors text-sm font-semibold flex items-center gap-2">
           &larr; Back to jobs
         </Link>
       </div>
@@ -145,6 +176,7 @@ export default function JobDetails() {
               </div>
             </div>
             
+<<<<<<< HEAD
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => navigate(`/user/apply/${job.id}`)}
@@ -159,6 +191,32 @@ export default function JobDetails() {
                 {isSaved ? "Saved ♥" : "Save Job ♡"}
               </button>
             </div>
+=======
+            {/* Render different buttons based on the user role */}
+            {user?.role === "admin" ? (
+              <div className="flex flex-col gap-3">
+                <button className={`w-full py-4 font-bold rounded-xl shadow-sm text-lg transition-colors border ${job.isActive ? 'bg-[var(--bg-primary)] text-red-500 border-red-500 hover:bg-red-500/10' : 'bg-[var(--bg-primary)] text-green-500 border-green-500 hover:bg-green-500/10'}`}>
+                  {job.isActive ? "Takedown Job" : "Restore Job"}
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => setHasApplied(true)}
+                  disabled={hasApplied}
+                  className={`w-full py-4 font-bold rounded-xl shadow-sm text-lg transition-colors ${hasApplied ? "bg-[var(--color-secondary)] text-white cursor-not-allowed opacity-90" : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)]"}`}
+                >
+                  {hasApplied ? "Applied ✓" : "Apply Now"}
+                </button>
+                <button 
+                  onClick={() => setIsSaved(!isSaved)}
+                  className={`w-full py-3 font-bold rounded-xl shadow-sm transition-colors border ${isSaved ? "bg-[var(--bg-secondary)] text-[var(--color-accent)] border-[var(--color-accent)]" : "bg-[var(--bg-primary)] text-[var(--color-primary)] border-[var(--border-color)] hover:border-[var(--color-primary)]"}`}
+                >
+                  {isSaved ? "Saved ♥" : "Save Job ♡"}
+                </button>
+              </div>
+            )}
+>>>>>>> 1254ad9c4a731c8f55ec664191bc68947ee2abe8
           </div>
         </aside>
       </div>

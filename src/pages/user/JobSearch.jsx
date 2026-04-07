@@ -80,11 +80,19 @@ export default function JobSearch() {
   };
 
   const filteredJobs = jobs.filter(job => {
+<<<<<<< HEAD
     const matchesSearch =
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.company.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType =
       selectedTypes.length === 0 || selectedTypes.includes(job.type);
+=======
+    // If the admin takes a job down, it should completely disappear from the user feed
+    if (job.isActive === false) return false;
+    
+    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || job.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(job.type);
+>>>>>>> 1254ad9c4a731c8f55ec664191bc68947ee2abe8
     return matchesSearch && matchesType;
   });
 
