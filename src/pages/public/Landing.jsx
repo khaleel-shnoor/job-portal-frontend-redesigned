@@ -1,11 +1,14 @@
 import Navbar from "../../components/Navbar";
-import { Briefcase, Users, Building2, CheckCircle, EqualApproximatelyIcon, Mail } from "lucide-react";
+import { Briefcase, Users, Building2, CheckCircle, EqualApproximatelyIcon, Mail,MapPin } from "lucide-react";
 import wcu from "../../assets/hero.jpg";
 import herobg from "../../assets/hero.avif";
 import partner1 from "./partners/our_partners1.png";
 import partner2 from "./partners/our_partners2.png";
 import partner3 from "./partners/our_partners3.png";
 import partner4 from "./partners/our_partners4.png";
+import { Link } from "react-router-dom";
+import { TiSocialFacebook, TiSocialInstagram, TiSocialLinkedin } from "react-icons/ti";
+
 
 export default function Landing() {
   return (
@@ -218,16 +221,19 @@ export default function Landing() {
               
               
               <a href="https://www.linkedin.com/company/shnoor-international/" className="text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                <TiSocialLinkedin className="w-5 h-5" />
               </a>
               
               <a href="#" className="text-[var(--text-secondary)] hover:text-green-500 transition-colors" title="WhatsApp">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <TiSocialFacebook className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-[var(--text-secondary)] hover:text-green-500 transition-colors" title="WhatsApp">
+                <TiSocialInstagram className="w-5 h-5" />
               </a>
             </div>
-            <h3 className="font-bold text-[var(--text-primary)] mb-4">Contacts</h3>
-            <p className="text-sm text-[var(--text-secondary)]"><Mail className="inline w-8 h-4"/> info@shnoor.com (General)</p>
-            <p className="text-sm text-[var(--text-secondary)]"><Mail className="inline w-8 h-4"/> proc@shnoor.com (Sales)</p>
+            <h3 className="f>ont-bold text-[var(--text-primary)] mb-4">Contacts</h3>
+            <p className="text-sm text-[var(--text-secondary)]"><Mail className="inline w-8 h-4"/> info@shnoor.com </p>
+           
           </div>
         </div>
 
@@ -235,7 +241,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 mt-12 flex flex-col items-center text-center">
           <h3 className="font-bold text-[var(--text-primary)] text-lg mb-2">Location</h3>
           <p className="text-[var(--text-secondary)] flex items-center justify-center gap-2">
-            <span className="text-xl">📍</span>
+              <MapPin className="w-5 h-5" />
             <span>10009 Mount Tabor Road, Odessa Missouri, United States.</span>
           </p>
         </div>

@@ -1,4 +1,3 @@
-// pages/Terms.jsx
 import React from "react";
 import LegalLayout from "../../layouts/LegalLayout";
 import LegalSection from "../../components/LegalSection";
@@ -66,7 +65,7 @@ const Terms = () => {
       </LegalSection>
 
       <LegalSection title="9. Contact">
-        <p>Email: support@jobportal.com</p>
+        <p>Email: support@shnoor.com</p>
       </LegalSection>
 
     </LegalLayout>

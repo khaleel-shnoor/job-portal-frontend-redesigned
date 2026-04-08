@@ -56,7 +56,7 @@ const Privacy = () => {
       </LegalSection>
 
       <LegalSection title="8. Contact">
-        <p>Email: support@jobportal.com</p>
+        <p>Email: support@shnoor.com</p>
       </LegalSection>
 
     </LegalLayout>
