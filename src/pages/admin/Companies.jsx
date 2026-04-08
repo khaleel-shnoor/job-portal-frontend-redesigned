@@ -72,19 +72,82 @@ export default function Companies() {
       <header className="flex flex-col md:flex-row justify-between md:items-end gap-3 sm:gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Company Management</h1>
-          <p className="text-[var(--text-secondary)] mt-2">View, verify, and manage employers on the platform.</p>
+          <p className="text-[var(--text-secondary)] mt-1 sm:mt-2 text-sm sm:text-base">View, verify, and manage employers on the platform.</p>
         </div>
         <input
           type="text"
           placeholder="Search companies..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-72 p-3 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--color-accent)] shadow-sm transition-colors"
+          className="w-full md:w-72 p-3 rounded-xl bg-[var(--bg-primary)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--color-accent)] shadow-sm transition-colors text-sm"
         />
       </header>
 
-      <section className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[800px]">
+      {/* Mobile & Tablet: Card list */}
+      <section className="flex flex-col gap-3 md:hidden">
+        {filteredCompanies.length === 0 ? (
+          <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-6 text-center text-[var(--text-secondary)] italic text-sm">
+            No companies found.
+          </div>
+        ) : (
+          filteredCompanies.map((company) => (
+            <div key={company.id} className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] shadow-sm p-4">
+              <div className="flex justify-between items-start gap-3 mb-3">
+                <div className="min-w-0">
+                  <div className="font-bold text-[var(--color-primary)] truncate">{company.name}</div>
+                  <div className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{company.email}</div>
+                </div>
+                <div className="flex flex-col gap-1 items-end shrink-0">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${
+                    company.approved
+                      ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                      : "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                  }`}>
+                    {company.approved ? "Approved" : "Pending"}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${
+                    company.status === "active"
+                      ? "bg-green-500/10 text-green-500 border-green-500/20"
+                      : "bg-red-500/10 text-red-500 border-red-500/20"
+                  }`}>
+                    {company.status === "active" ? "Active" : "Suspended"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-sm text-[var(--text-secondary)] mb-3">
+                <span>{company.location || "Remote"}</span>
+                <span className="font-semibold text-[var(--text-primary)]">{company.job_count ?? 0} jobs</span>
+              </div>
+
+              <div className="flex gap-3 pt-3 border-t border-[var(--border-color)]">
+                {!company.approved && (
+                  <button
+                    onClick={() => handleToggleApprove(company.id, company.approved)}
+                    className="flex-1 text-sm font-semibold text-center py-2 rounded-lg border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition-colors"
+                  >
+                    Approve
+                  </button>
+                )}
+                <button
+                  onClick={() => handleToggleStatus(company.id, company.status)}
+                  className={`flex-1 text-sm font-semibold text-center py-2 rounded-lg border transition-colors ${
+                    company.status === "active"
+                      ? "border-red-300 text-red-500 hover:bg-red-500 hover:text-white"
+                      : "border-green-300 text-green-500 hover:bg-green-500 hover:text-white"
+                  }`}
+                >
+                  {company.status === "active" ? "Suspend" : "Activate"}
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </section>
+
+      {/* Desktop: Table */}
+      <section className="hidden md:block bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] text-[var(--text-secondary)] text-sm uppercase tracking-wider">
               <th className="p-3 sm:p-4 font-semibold">Company</th>
@@ -112,46 +175,44 @@ export default function Companies() {
                   <td className="p-3 sm:p-4 text-[var(--text-secondary)] font-medium">{company.location || "Remote"}</td>
                   <td className="p-3 sm:p-4 text-center font-bold text-[var(--text-primary)]">{company.job_count ?? 0}</td>
                   <td className="p-3 sm:p-4 text-center">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                        company.approved
-                          ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
-                          : "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      company.approved
+                        ? "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                        : "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                    }`}>
                       {company.approved ? "Approved" : "Pending"}
                     </span>
                   </td>
                   <td className="p-3 sm:p-4 text-center">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                        company.status === "active"
-                          ? "bg-green-500/10 text-green-500 border-green-500/20"
-                          : "bg-red-500/10 text-red-500 border-red-500/20"
-                      }`}
-                    >
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      company.status === "active"
+                        ? "bg-green-500/10 text-green-500 border-green-500/20"
+                        : "bg-red-500/10 text-red-500 border-red-500/20"
+                    }`}>
                       {company.status === "active" ? "Active" : "Suspended"}
                     </span>
                   </td>
-                  <td className="p-3 sm:p-4 flex justify-end gap-4 items-center">
-                    {!company.approved && (
+                  <td className="p-3 sm:p-4">
+                    <div className="flex justify-end gap-4 items-center">
+                      {!company.approved && (
+                        <button
+                          onClick={() => handleToggleApprove(company.id, company.approved)}
+                          className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                        >
+                          Approve
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleToggleApprove(company.id, company.approved)}
-                        className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                        onClick={() => handleToggleStatus(company.id, company.status)}
+                        className={`text-sm font-semibold transition-colors ${
+                          company.status === "active"
+                            ? "text-[var(--text-secondary)] hover:text-red-500"
+                            : "text-red-500 hover:text-green-500"
+                        }`}
                       >
-                        Approve
+                        {company.status === "active" ? "Suspend" : "Activate"}
                       </button>
-                    )}
-                    <button
-                      onClick={() => handleToggleStatus(company.id, company.status)}
-                      className={`text-sm font-semibold transition-colors ${
-                        company.status === "active"
-                          ? "text-[var(--text-secondary)] hover:text-red-500"
-                          : "text-red-500 hover:text-green-500"
-                      }`}
-                    >
-                      {company.status === "active" ? "Suspend" : "Activate"}
-                    </button>
+                    </div>
                   </td>
                 </tr>
               ))
