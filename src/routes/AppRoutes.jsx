@@ -26,7 +26,9 @@ import MyApplications from "../pages/user/MyApplications";
 import SavedJobs from "../pages/user/SavedJobs";
 import ApplyJob from "../pages/user/ApplyJob";
 import UserProfile from "../pages/user/UserProfile";
-import MainLayout from "../layouts/MainLayout";
+import LegalLayout from "../layouts/LegalLayout";
+import Terms from "../pages/public/Terms";
+import Privacy from "../pages/public/Privacy";
 
 function RoleRedirect() {
   const { user } = useAuth();
@@ -46,6 +48,11 @@ export default function AppRoutes() {
         <Route path="/" element={<Landing />} />
         {/* Auto redirect after login */}
         <Route path="/redirect" element={<RoleRedirect />} />
+
+        {/* <Route path='/legal' element ={<LegalLayout/>} > */}
+          <Route path="legal/terms" element={<Terms />} />
+          <Route path="legal/privacy" element={<Privacy />} />
+        {/* </Route> */}
 
         {/* Auth */}
         <Route path="/login" element={<Login />} />

@@ -126,7 +126,7 @@ export default function Landing() {
         </div>
 
         {/* Right Image */}
-        <img src="/hero.png" className="rounded-xl shadow" />
+        {/* <img src="/hero.png" className="rounded-xl shadow" /> */}
       </section>
 
       {/* CTA */}
