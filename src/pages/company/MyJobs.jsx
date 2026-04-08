@@ -1,18 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Briefcase,
-  MapPin,
-  DollarSign,
-  Clock,
-  Users,
-  Eye,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Loader,
-  X,
+  Briefcase, MapPin, DollarSign, Clock, Users, Eye,
+  Edit, Trash2, CheckCircle, XCircle, Loader, X,
 } from "lucide-react";
 import api from "../../services/api";
 
@@ -21,8 +11,7 @@ export default function MyJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  // Edit modal state
+
   const [editingJob, setEditingJob] = useState(null);
   const [editForm, setEditForm] = useState({
     title: "",
@@ -42,7 +31,6 @@ export default function MyJobs() {
       setJobs(response.data);
       setError("");
     } catch (err) {
-      console.error("Failed to fetch jobs:", err);
       setError(err.response?.data?.message || "Failed to load jobs");
     } finally {
       setLoading(false);
@@ -67,11 +55,7 @@ export default function MyJobs() {
     const newStatus = currentStatus === "open" ? "closed" : "open";
     try {
       await api.patch(`/jobs/${jobId}/status`, { status: newStatus });
-      setJobs(
-        jobs.map((job) =>
-          job.id === jobId ? { ...job, status: newStatus } : job
-        )
-      );
+      setJobs(jobs.map((job) => (job.id === jobId ? { ...job, status: newStatus } : job)));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to update job status");
     }
@@ -109,7 +93,6 @@ export default function MyJobs() {
     setUpdating(true);
     try {
       await api.put(`/jobs/${editingJob.id}`, editForm);
-      // Refresh jobs list
       await fetchJobs();
       closeEditModal();
     } catch (err) {
@@ -129,7 +112,7 @@ export default function MyJobs() {
       currency: "INR",
       maximumFractionDigits: 0,
     });
-    return `${formatter.format(min)} - ${formatter.format(max)}`;
+    return `${formatter.format(min)} – ${formatter.format(max)}`;
   };
 
   if (loading) {
@@ -142,24 +125,22 @@ export default function MyJobs() {
 
   if (error) {
     return (
-      <div className="p-6 text-center text-red-500 bg-red-50 rounded-lg">
-        {error}
-      </div>
+      <div className="p-6 text-center text-red-500 bg-red-50 rounded-lg">{error}</div>
     );
   }
 
   return (
-    <div className="p-6 bg-[var(--bg-primary)] min-h-screen">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-6 bg-[var(--bg-primary)] min-h-screen">
+
+      {/* Header — stacks on mobile, side-by-side on sm+ */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
         <div className="flex items-center gap-2">
           <Briefcase className="h-6 w-6 text-[var(--color-accent)]" />
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            My Posted Jobs
-          </h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">My Posted Jobs</h1>
         </div>
         <button
           onClick={() => navigate("/company/post-job")}
-          className="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
+          className="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <Briefcase className="h-4 w-4" /> Post New Job
         </button>
@@ -183,9 +164,10 @@ export default function MyJobs() {
               key={job.id}
               className="bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg p-4 hover:shadow-md transition"
             >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+              {/* Card inner: info on top, actions below on mobile; side-by-side on md+ */}
+              <div className="flex flex-col md:flex-row md:justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                       {job.title}
                     </h2>
@@ -200,26 +182,26 @@ export default function MyJobs() {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                     <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4 flex-shrink-0" />
                       {job.location || "Remote"}
                     </div>
                     <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
-                      <DollarSign className="h-4 w-4" />
+                      <DollarSign className="h-4 w-4 flex-shrink-0" />
                       {formatSalary(job.salary_min, job.salary_max)}
                     </div>
                     <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-4 w-4 flex-shrink-0" />
                       {job.type}
                     </div>
                   </div>
 
-                  <p className="text-[var(--text-primary)] mb-3 line-clamp-2">
+                  <p className="text-[var(--text-primary)] mb-3 line-clamp-2 text-sm">
                     {job.description}
                   </p>
 
-                  <div className="flex gap-4 text-sm">
+                  <div className="flex gap-4 text-sm flex-wrap">
                     <div className="flex items-center gap-1 text-[var(--text-secondary)]">
                       <Users className="h-4 w-4" />
                       <span>{job.applications_count || 0} applications</span>
@@ -231,7 +213,8 @@ export default function MyJobs() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2 ml-4">
+                {/* Action buttons — row on mobile, column on md+ */}
+                <div className="flex flex-row md:flex-col gap-2 md:ml-4 flex-wrap md:flex-nowrap">
                   <button
                     onClick={() => handleToggleStatus(job.id, job.status)}
                     className={`p-2 rounded-lg transition ${
@@ -268,10 +251,10 @@ export default function MyJobs() {
         </div>
       )}
 
-      {/* Edit Modal */}
+      {/* Edit Modal — top-aligned on mobile to clear the topbar, centered on sm+ */}
       {editingJob && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--bg-primary)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start sm:items-center justify-center z-50 p-4 pt-16 sm:pt-4 overflow-y-auto">
+          <div className="bg-[var(--bg-primary)] rounded-xl w-full max-w-2xl">
             <div className="flex justify-between items-center p-4 border-b border-[var(--border-color)]">
               <h2 className="text-xl font-bold text-[var(--text-primary)]">Edit Job</h2>
               <button
@@ -293,8 +276,8 @@ export default function MyJobs() {
                   className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg"
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="min-w-0">
                   <label className="block text-sm font-medium mb-1">Location</label>
                   <input
                     type="text"
@@ -305,7 +288,7 @@ export default function MyJobs() {
                     placeholder="Leave empty for remote"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="block text-sm font-medium mb-1">Job Type *</label>
                   <select
                     name="type"
@@ -319,8 +302,8 @@ export default function MyJobs() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="min-w-0">
                   <label className="block text-sm font-medium mb-1">Salary Min (INR) *</label>
                   <input
                     type="number"
@@ -332,7 +315,7 @@ export default function MyJobs() {
                     className="w-full px-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label className="block text-sm font-medium mb-1">Salary Max (INR) *</label>
                   <input
                     type="number"
@@ -368,18 +351,18 @@ export default function MyJobs() {
                   <option value="closed">Closed</option>
                 </select>
               </div>
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={closeEditModal}
-                  className="px-4 py-2 border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-secondary)]"
+                  className="w-full sm:w-auto px-4 py-2 border border-[var(--border-color)] rounded-lg hover:bg-[var(--bg-secondary)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updating}
-                  className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
+                  className="w-full sm:w-auto px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
                 >
                   {updating ? "Saving..." : "Save Changes"}
                 </button>

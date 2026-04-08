@@ -1,5 +1,5 @@
 import Navbar from "../../components/Navbar";
-import { Briefcase, Users, Building2, CheckCircle } from "lucide-react";
+import { Briefcase, Users, Building2, CheckCircle, EqualApproximatelyIcon, Mail } from "lucide-react";
 import wcu from "../../assets/hero.jpg";
 import herobg from "../../assets/hero.avif";
 import partner1 from "./partners/our_partners1.png";
@@ -131,11 +131,7 @@ export default function Landing() {
         </div>
 
         {/* Right Image */}
-<<<<<<< HEAD
         {/* <img src="/hero.png" className="rounded-xl shadow" /> */}
-=======
-        <img src={wcu} className="rounded-xl shadow" />
->>>>>>> 2c00403dab8ee4aa0e2238aa3423f0e22e59eafc
       </section>
 
       {/* CTA */}
@@ -230,8 +226,8 @@ export default function Landing() {
               </a>
             </div>
             <h3 className="font-bold text-[var(--text-primary)] mb-4">Contacts</h3>
-            <p className="text-sm text-[var(--text-secondary)]">📧info@shnoor.com (General)</p>
-            <p className="text-sm text-[var(--text-secondary)]">📧proc@shnoor.com (Sales)</p>
+            <p className="text-sm text-[var(--text-secondary)]"><Mail className="inline w-8 h-4"/> info@shnoor.com (General)</p>
+            <p className="text-sm text-[var(--text-secondary)]"><Mail className="inline w-8 h-4"/> proc@shnoor.com (Sales)</p>
           </div>
         </div>
 

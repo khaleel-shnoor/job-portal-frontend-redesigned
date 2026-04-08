@@ -45,7 +45,11 @@ export default function PostJob() {
     const salaryMin = parseFloat(formData.salary_min);
     const salaryMax = parseFloat(formData.salary_max);
 
-    if (isNaN(salaryMin) || isNaN(salaryMax) || salaryMin < 0 || salaryMax < 0 || salaryMin > salaryMax) {
+    if (
+      isNaN(salaryMin) || isNaN(salaryMax) ||
+      salaryMin < 0 || salaryMax < 0 ||
+      salaryMin > salaryMax
+    ) {
       setError("Please enter a valid salary range (min ≤ max).");
       setLoading(false);
       return;
@@ -71,11 +75,15 @@ export default function PostJob() {
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-[var(--text-secondary)]">Loading company information...</div>;
+    return (
+      <div className="p-8 text-center text-[var(--text-secondary)]">
+        Loading company information...
+      </div>
+    );
   }
 
   return (
-    <div className="p-6 bg-[var(--bg-primary)] min-h-screen">
+    <div className="p-4 sm:p-6 bg-[var(--bg-primary)] min-h-screen">
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
           <Briefcase className="h-6 w-6 text-[var(--color-accent)]" />
@@ -100,7 +108,9 @@ export default function PostJob() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Title *</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+              Job Title *
+            </label>
             <input
               type="text"
               name="title"
@@ -112,9 +122,12 @@ export default function PostJob() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Location</label>
+          {/* Location + Type */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="min-w-0">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Location
+              </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -129,8 +142,10 @@ export default function PostJob() {
               <p className="text-xs text-[var(--text-secondary)] mt-1">Leave empty if remote.</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Type *</label>
+            <div className="min-w-0">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Job Type *
+              </label>
               <div className="relative">
                 <Clock className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <select
@@ -148,9 +163,12 @@ export default function PostJob() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Salary Min (INR) *</label>
+          {/* Salary */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="min-w-0">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Salary Min (INR) *
+              </label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -167,8 +185,10 @@ export default function PostJob() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Salary Max (INR) *</label>
+            <div className="min-w-0">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Salary Max (INR) *
+              </label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -186,8 +206,11 @@ export default function PostJob() {
             </div>
           </div>
 
+          {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Description *</label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+              Job Description *
+            </label>
             <div className="relative">
               <FileText className="absolute left-3 top-3 h-4 w-4 text-[var(--text-secondary)]" />
               <textarea
@@ -202,18 +225,19 @@ export default function PostJob() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          {/* Buttons — stack on mobile, row on sm+ */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={() => navigate("/company/jobs")}
-              className="px-6 py-2 border border-[var(--border-color)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition"
+              className="w-full sm:w-auto px-6 py-2 border border-[var(--border-color)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition disabled:opacity-50"
             >
               {loading ? "Posting..." : "Post Job"}
             </button>
