@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, MapPin, DollarSign, Clock, FileText, Building } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, Clock, FileText } from "lucide-react";
 import api from "../../services/api";
 
 export default function PostJob() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [companies, setCompanies] = useState([]);
-  const [selectedCompanyId, setSelectedCompanyId] = useState("");
+  const [company, setCompany] = useState(null);
   const [fetching, setFetching] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -21,37 +20,17 @@ export default function PostJob() {
   });
 
   useEffect(() => {
-    const fetchManagerCompanies = async () => {
+    const fetchCompany = async () => {
       try {
-        // Try to get all companies (assuming /companies returns all)
-        // Then filter by manager_id client-side? But we don't have manager_id in response?
-        // Alternative: use a dedicated endpoint /companies/my if it returns array.
-        // Since /companies/my is failing, let's try /companies and assume it returns all companies
-        // and then we filter by the logged-in user's id (stored in token).
-        const response = await api.get("/users/companies");
-        const allCompanies = response.data;
-        
-        // We need the current user's ID. Assume it's stored in localStorage or from /users/me
-        const userRes = await api.get("/users/profile");
-        const currentUserId = userRes.data.id;
-        
-        const managedCompanies = allCompanies.filter(company => company.manager_id === currentUserId);
-        
-        if (managedCompanies.length === 0) {
-          setError("You don't manage any companies. Please contact an admin.");
-        } else {
-          setCompanies(managedCompanies);
-          setSelectedCompanyId(managedCompanies[0].id);
-        }
+        const res = await api.get("/company/my-company");
+        setCompany(res.data);
       } catch (err) {
-        console.error(err);
-        setError("Unable to fetch your companies. Please try again later.");
+        setError("Unable to fetch your company information. Please try again.");
       } finally {
         setFetching(false);
       }
     };
-
-    fetchManagerCompanies();
+    fetchCompany();
   }, []);
 
   const handleChange = (e) => {
@@ -63,17 +42,11 @@ export default function PostJob() {
     setError("");
     setLoading(true);
 
-    if (!selectedCompanyId) {
-      setError("Please select a company.");
-      setLoading(false);
-      return;
-    }
-
     const salaryMin = parseFloat(formData.salary_min);
     const salaryMax = parseFloat(formData.salary_max);
 
     if (isNaN(salaryMin) || isNaN(salaryMax) || salaryMin < 0 || salaryMax < 0 || salaryMin > salaryMax) {
-      setError("Please enter valid salary range (min ≤ max).");
+      setError("Please enter a valid salary range (min ≤ max).");
       setLoading(false);
       return;
     }
@@ -81,12 +54,10 @@ export default function PostJob() {
     const payload = {
       title: formData.title,
       description: formData.description,
-      company_id: selectedCompanyId,
       salary_min: salaryMin,
       salary_max: salaryMax,
       location: formData.location.trim() || null,
       type: formData.type,
-      status: "open",
     };
 
     try {
@@ -100,11 +71,7 @@ export default function PostJob() {
   };
 
   if (fetching) {
-    return (
-      <div className="p-8 text-center text-[var(--text-secondary)]">
-        Loading company information...
-      </div>
-    );
+    return <div className="p-8 text-center text-[var(--text-secondary)]">Loading company information...</div>;
   }
 
   return (
@@ -112,57 +79,28 @@ export default function PostJob() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
           <Briefcase className="h-6 w-6 text-[var(--color-accent)]" />
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-            Post a New Job
-          </h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Post a New Job</h1>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
-            {error}
+        {company && (
+          <div className="mb-6 bg-[var(--bg-secondary)] p-3 rounded-lg border border-[var(--border-color)]">
+            <span className="text-sm font-medium text-[var(--text-secondary)]">Posting for: </span>
+            <span className="font-semibold text-[var(--text-primary)]">{company.name}</span>
+            {!company.approved && (
+              <p className="text-xs text-amber-600 mt-1">
+                Note: Your company is pending approval. Jobs will be visible once approved.
+              </p>
+            )}
           </div>
         )}
 
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Company selection */}
-          {companies.length > 1 && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                Posting for Company *
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
-                <select
-                  value={selectedCompanyId}
-                  onChange={(e) => setSelectedCompanyId(Number(e.target.value))}
-                  className="w-full pl-9 pr-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                >
-                  {companies.map(company => (
-                    <option key={company.id} value={company.id}>
-                      {company.name} {!company.approved ? "(Pending Approval)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {companies.find(c => c.id === selectedCompanyId)?.approved === false && (
-                <p className="text-xs text-amber-600 mt-1">
-                  Note: Your company is not yet approved. Job will be hidden until approval.
-                </p>
-              )}
-            </div>
-          )}
-
-          {companies.length === 1 && (
-            <div className="bg-[var(--bg-secondary)] p-3 rounded-lg">
-              <span className="text-sm font-medium text-[var(--text-secondary)]">Posting for: </span>
-              <span className="font-semibold text-[var(--text-primary)]">{companies[0].name}</span>
-            </div>
-          )}
-
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-              Job Title *
-            </label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Title *</label>
             <input
               type="text"
               name="title"
@@ -176,9 +114,7 @@ export default function PostJob() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                Location
-              </label>
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Location</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -190,15 +126,11 @@ export default function PostJob() {
                   placeholder="e.g., Hyderabad (leave empty for remote)"
                 />
               </div>
-              <p className="text-xs text-[var(--text-secondary)] mt-1">
-                Leave empty if remote.
-              </p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">Leave empty if remote.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                Job Type *
-              </label>
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Type *</label>
               <div className="relative">
                 <Clock className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <select
@@ -218,9 +150,7 @@ export default function PostJob() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                Salary Min (INR) *
-              </label>
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Salary Min (INR) *</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -238,9 +168,7 @@ export default function PostJob() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-                Salary Max (INR) *
-              </label>
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Salary Max (INR) *</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
                 <input
@@ -259,9 +187,7 @@ export default function PostJob() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
-              Job Description *
-            </label>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Job Description *</label>
             <div className="relative">
               <FileText className="absolute left-3 top-3 h-4 w-4 text-[var(--text-secondary)]" />
               <textarea
@@ -271,7 +197,7 @@ export default function PostJob() {
                 required
                 rows="6"
                 className="w-full pl-9 pr-3 py-2 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                placeholder="Describe the role, responsibilities, benefits, and requirements..."
+                placeholder="Describe the role, responsibilities, and requirements..."
               />
             </div>
           </div>
@@ -279,7 +205,7 @@ export default function PostJob() {
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
-              onClick={() => navigate("/manager/jobs")}
+              onClick={() => navigate("/company/jobs")}
               className="px-6 py-2 border border-[var(--border-color)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-secondary)] transition"
             >
               Cancel

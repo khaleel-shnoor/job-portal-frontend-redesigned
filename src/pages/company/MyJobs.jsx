@@ -158,7 +158,7 @@ export default function MyJobs() {
           </h1>
         </div>
         <button
-          onClick={() => navigate("/manager/post-job")}
+          onClick={() => navigate("/company/post-job")}
           className="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center gap-2"
         >
           <Briefcase className="h-4 w-4" /> Post New Job
@@ -170,7 +170,7 @@ export default function MyJobs() {
           <Briefcase className="h-12 w-12 text-[var(--text-secondary)] mx-auto mb-3" />
           <p className="text-[var(--text-secondary)]">No jobs posted yet</p>
           <button
-            onClick={() => navigate("/manager/post-job")}
+            onClick={() => navigate("/company/post-job")}
             className="mt-4 text-[var(--color-accent)] hover:underline"
           >
             Post your first job

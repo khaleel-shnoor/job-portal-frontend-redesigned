@@ -1,48 +1,68 @@
-import { useState } from "react";
-import {
-  Users,
-  Search,
-  Filter,
-  Eye,
-  UserCheck,
-  UserX,
-  FileText,
-  ChevronDown,
-} from "lucide-react";
-import { applications, jobs, users } from "../../data/dummyData.js";
+import { useState, useEffect } from "react";
+import { Users, Search, Filter, Eye, UserCheck, UserX, FileText, ChevronDown, Loader } from "lucide-react";
+import api from "../../services/api";
 
-const Applicants = ({ companyId = 1 }) => {
-  const companyJobs = jobs.filter((job) => job.companyId === companyId);
-  const companyJobIds = companyJobs.map((job) => job.id);
-  const companyApplications = applications.filter((app) =>
-    companyJobIds.includes(app.jobId)
-  );
-
+const Applicants = () => {
+  const [applications, setApplications] = useState([]);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedJob, setSelectedJob] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const enrichedApplications = companyApplications.map((app) => {
-    const job = jobs.find((j) => j.id === app.jobId);
-    const user = users.find((u) => u.id === app.userId);
-    return { ...app, job, user };
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [jobsRes, appsRes] = await Promise.all([
+          api.get("/company/jobs"),
+          api.get("/company/dashboard-stats"),
+        ]);
+        setJobs(jobsRes.data);
 
-  const filteredApplications = enrichedApplications.filter((app) => {
-    const matchesJob = selectedJob === "all" || app.jobId === parseInt(selectedJob);
-    const matchesStatus = selectedStatus === "all" || app.status === selectedStatus;
-    const matchesSearch =
-      searchTerm === "" ||
-      app.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.user?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.job?.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesJob && matchesStatus && matchesSearch;
-  });
+        // Fetch all applications for all company jobs via dashboard-stats
+        // Actually we need raw applications — call applications/job/:id for each job
+        // Simpler: use a single company-wide endpoint we added
+        // Re-fetch applications per job and flatten
+        const allApps = [];
+        for (const job of jobsRes.data) {
+          try {
+            const appRes = await api.get(`/applications/job/${job.id}`);
+            const enriched = appRes.data.map((app) => ({
+              ...app,
+              job_title: job.title,
+              job_location: job.location,
+              job_id: job.id,
+              skills: app.skills
+                ? typeof app.skills === "string"
+                  ? JSON.parse(app.skills)
+                  : app.skills
+                : [],
+            }));
+            allApps.push(...enriched);
+          } catch (e) {
+            // skip failed job
+          }
+        }
+        setApplications(allApps);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load applicants");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const updateStatus = (appId, newStatus) => {
-    // In a real app, you'd update the database/state
-    console.log(`Application ${appId} status updated to ${newStatus}`);
-    alert(`Application ${appId} marked as ${newStatus}`);
+  const updateStatus = async (appId, newStatus) => {
+    try {
+      await api.put(`/applications/${appId}`, { status: newStatus });
+      setApplications((prev) =>
+        prev.map((app) => (app.id === appId ? { ...app, status: newStatus } : app))
+      );
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to update status");
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -56,13 +76,34 @@ const Applicants = ({ companyId = 1 }) => {
     return styles[status] || "bg-gray-100 text-gray-800";
   };
 
+  const filteredApplications = applications.filter((app) => {
+    const matchesJob = selectedJob === "all" || String(app.job_id) === String(selectedJob);
+    const matchesStatus = selectedStatus === "all" || app.status === selectedStatus;
+    const matchesSearch =
+      searchTerm === "" ||
+      (app.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (app.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (app.job_title || "").toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesJob && matchesStatus && matchesSearch;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader className="h-8 w-8 animate-spin text-[var(--color-accent)]" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
+  }
+
   return (
     <div className="p-6 bg-[var(--bg-primary)] min-h-screen">
       <div className="flex items-center gap-2 mb-6">
         <Users className="h-6 w-6 text-[var(--color-accent)]" />
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-          Applicants Management
-        </h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Applicants Management</h1>
       </div>
 
       <div className="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] p-4 mb-6">
@@ -86,10 +127,8 @@ const Applicants = ({ companyId = 1 }) => {
               className="w-full pl-9 pr-3 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] appearance-none"
             >
               <option value="all">All Jobs</option>
-              {companyJobs.map((job) => (
-                <option key={job.id} value={job.id}>
-                  {job.title}
-                </option>
+              {jobs.map((job) => (
+                <option key={job.id} value={job.id}>{job.title}</option>
               ))}
             </select>
             <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-[var(--text-secondary)] pointer-events-none" />
@@ -113,7 +152,7 @@ const Applicants = ({ companyId = 1 }) => {
           </div>
 
           <div className="text-right text-[var(--text-secondary)] text-sm pt-2">
-            Showing {filteredApplications.length} of {enrichedApplications.length} applicants
+            Showing {filteredApplications.length} of {applications.length} applicants
           </div>
         </div>
       </div>
@@ -134,18 +173,10 @@ const Applicants = ({ companyId = 1 }) => {
                 <div className="flex-1">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                        {app.user?.name}
-                      </h3>
-                      <p className="text-sm text-[var(--text-secondary)]">
-                        {app.user?.email}
-                      </p>
+                      <h3 className="text-lg font-semibold text-[var(--text-primary)]">{app.name}</h3>
+                      <p className="text-sm text-[var(--text-secondary)]">{app.email}</p>
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                        app.status
-                      )}`}
-                    >
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(app.status)}`}>
                       {app.status}
                     </span>
                   </div>
@@ -153,64 +184,63 @@ const Applicants = ({ companyId = 1 }) => {
                   <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                     <div>
                       <span className="text-[var(--text-secondary)]">Applied for:</span>
-                      <span className="ml-2 text-[var(--text-primary)] font-medium">
-                        {app.job?.title}
-                      </span>
+                      <span className="ml-2 text-[var(--text-primary)] font-medium">{app.job_title}</span>
                     </div>
                     <div>
                       <span className="text-[var(--text-secondary)]">Location:</span>
-                      <span className="ml-2 text-[var(--text-primary)]">
-                        {app.job?.location}
-                      </span>
+                      <span className="ml-2 text-[var(--text-primary)]">{app.job_location || "Remote"}</span>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-secondary)]">Skills:</span>
-                      <div className="inline-flex flex-wrap gap-1 ml-2">
-                        {app.user?.skills.slice(0, 3).map((skill) => (
-                          <span
-                            key={skill}
-                            className="px-1.5 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-xs"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                        {app.user?.skills.length > 3 && (
-                          <span className="text-xs text-[var(--text-secondary)]">
-                            +{app.user.skills.length - 3}
-                          </span>
-                        )}
+                    {app.skills?.length > 0 && (
+                      <div className="col-span-2">
+                        <span className="text-[var(--text-secondary)]">Skills:</span>
+                        <div className="inline-flex flex-wrap gap-1 ml-2">
+                          {app.skills.slice(0, 4).map((skill) => (
+                            <span key={skill} className="px-1.5 py-0.5 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded text-xs">
+                              {skill}
+                            </span>
+                          ))}
+                          {app.skills.length > 4 && (
+                            <span className="text-xs text-[var(--text-secondary)]">+{app.skills.length - 4}</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-
-                  {app.status === "rejected" && (
-                    <p className="mt-2 text-xs text-red-600">
-                      Note: Candidate has been rejected
-                    </p>
-                  )}
                 </div>
 
-                <div className="flex flex-row md:flex-col gap-2 justify-end">
-                  <button
-                    onClick={() => window.open(`/resume/${app.user?.resume}`, "_blank")}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition"
-                    title="View Resume"
-                  >
-                    <FileText className="h-4 w-4" /> Resume
-                  </button>
-                  <button
-                    onClick={() => alert(`View details for ${app.user?.name}`)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition"
-                    title="View Details"
-                  >
-                    <Eye className="h-4 w-4" /> Details
-                  </button>
+                <div className="flex flex-row md:flex-col gap-2 justify-end flex-wrap">
+                  {app.resume_url && (
+                    <a
+                      href={app.resume_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] hover:bg-[var(--bg-primary)] transition"
+                    >
+                      <FileText className="h-4 w-4" /> Resume
+                    </a>
+                  )}
                   {app.status !== "shortlisted" && app.status !== "hired" && app.status !== "rejected" && (
                     <button
                       onClick={() => updateStatus(app.id, "shortlisted")}
                       className="flex items-center gap-1 px-3 py-1.5 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition"
                     >
                       <UserCheck className="h-4 w-4" /> Shortlist
+                    </button>
+                  )}
+                  {app.status === "shortlisted" && (
+                    <button
+                      onClick={() => updateStatus(app.id, "interview")}
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-purple-100 text-purple-800 rounded-lg hover:bg-purple-200 transition"
+                    >
+                      <Eye className="h-4 w-4" /> Interview
+                    </button>
+                  )}
+                  {app.status === "interview" && (
+                    <button
+                      onClick={() => updateStatus(app.id, "hired")}
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition"
+                    >
+                      <UserCheck className="h-4 w-4" /> Hire
                     </button>
                   )}
                   {app.status !== "rejected" && app.status !== "hired" && (
