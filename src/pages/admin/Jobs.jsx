@@ -42,11 +42,11 @@ export default function Jobs() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-8 max-w-7xl pb-12">
+      <div className="flex flex-col gap-6 sm:gap-8 max-w-7xl pb-12">
         <header>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)]">Global Job Feed</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)]">Global Job Feed</h1>
         </header>
-        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-8 text-center animate-pulse text-[var(--text-secondary)]">
+        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-6 sm:p-8 text-center animate-pulse text-[var(--text-secondary)]">
           Loading jobs...
         </div>
       </div>
@@ -54,14 +54,14 @@ export default function Jobs() {
   }
 
   if (error) {
-    return <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
+    return <div className="p-6 sm:p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full max-w-7xl pb-12">
-      <header className="flex flex-col md:flex-row justify-between md:items-end gap-4">
+    <div className="flex flex-col gap-6 sm:gap-8 h-full max-w-7xl pb-12">
+      <header className="flex flex-col md:flex-row justify-between md:items-end gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)] tracking-tight">Global Job Feed</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Global Job Feed</h1>
           <p className="text-[var(--text-secondary)] mt-2">Moderate active job postings across all companies.</p>
         </div>
         <input
@@ -77,36 +77,36 @@ export default function Jobs() {
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] text-[var(--text-secondary)] text-sm uppercase tracking-wider">
-              <th className="p-4 font-semibold">Job Title & Company</th>
-              <th className="p-4 font-semibold text-center">Location</th>
-              <th className="p-4 font-semibold text-center">Type</th>
-              <th className="p-4 font-semibold text-center">Applicants</th>
-              <th className="p-4 font-semibold text-center">Status</th>
-              <th className="p-4 font-semibold text-right">Actions</th>
+              <th className="p-3 sm:p-4 font-semibold">Job Title & Company</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Location</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Type</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Applicants</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Status</th>
+              <th className="p-3 sm:p-4 font-semibold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-color)]">
             {filteredJobs.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-8 text-center text-[var(--text-secondary)] italic">
+                <td colSpan="6" className="p-6 sm:p-8 text-center text-[var(--text-secondary)] italic">
                   No jobs found matching your criteria.
                 </td>
               </tr>
             ) : (
               filteredJobs.map((job) => (
                 <tr key={job.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                  <td className="p-4">
+                  <td className="p-3 sm:p-4">
                     <div className="font-bold text-[var(--color-primary)]">{job.title}</div>
                     <div className="text-sm font-medium text-[var(--text-secondary)] mt-1">{job.company_name}</div>
                   </td>
-                  <td className="p-4 text-center text-[var(--text-secondary)] font-medium">{job.location || "Remote"}</td>
-                  <td className="p-4 text-center">
+                  <td className="p-3 sm:p-4 text-center text-[var(--text-secondary)] font-medium">{job.location || "Remote"}</td>
+                  <td className="p-3 sm:p-4 text-center">
                     <span className="px-3 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs font-semibold rounded-full border border-[var(--border-color)] capitalize">
                       {job.type}
                     </span>
                   </td>
-                  <td className="p-4 text-center font-bold text-[var(--text-primary)]">{job.applicant_count ?? 0}</td>
-                  <td className="p-4 text-center">
+                  <td className="p-3 sm:p-4 text-center font-bold text-[var(--text-primary)]">{job.applicant_count ?? 0}</td>
+                  <td className="p-3 sm:p-4 text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold border ${
                         job.is_taken_down
@@ -119,7 +119,7 @@ export default function Jobs() {
                       {job.is_taken_down ? "Taken Down" : job.status === "open" ? "Active" : "Closed"}
                     </span>
                   </td>
-                  <td className="p-4 flex justify-end gap-4 items-center">
+                  <td className="p-3 sm:p-4 flex justify-end gap-4 items-center">
                     <Link
                       to={`/admin/jobs/${job.id}`}
                       className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"

@@ -33,14 +33,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-8 max-w-6xl pb-12">
+      <div className="flex flex-col gap-6 sm:gap-8 max-w-6xl pb-12">
         <header>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)]">Admin Overview</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)]">Admin Overview</h1>
           <p className="text-[var(--text-secondary)] mt-2">Loading platform stats...</p>
         </header>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-[var(--bg-primary)] p-6 rounded-xl border border-[var(--border-color)] animate-pulse h-28" />
+            <div key={i} className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] animate-pulse h-28" />
           ))}
         </div>
       </div>
@@ -73,43 +73,43 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="flex flex-col gap-8 h-full max-w-6xl pb-12">
+    <div className="flex flex-col gap-6 sm:gap-8 h-full max-w-6xl pb-12">
       <header>
-        <h1 className="text-3xl font-bold text-[var(--color-primary)] tracking-tight">Admin Overview</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Admin Overview</h1>
         <p className="text-[var(--text-secondary)] mt-2">Monitor platform health and recent activities.</p>
       </header>
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[var(--bg-primary)] p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Total Candidates</h3>
           <p className="text-4xl font-black text-[var(--color-primary)]">{stats.candidates}</p>
         </div>
-        <div className="bg-[var(--bg-primary)] p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
+        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Companies</h3>
           <p className="text-4xl font-black text-[var(--color-primary)]">{stats.companies}</p>
         </div>
-        <div className="bg-[var(--bg-primary)] p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
+        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Active Jobs</h3>
           <p className="text-4xl font-black text-[var(--color-accent)]">{stats.activeJobs}</p>
         </div>
-        <div className="bg-[var(--bg-primary)] p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
+        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Applications</h3>
           <p className="text-4xl font-black text-[var(--color-primary)]">{stats.totalApplications}</p>
         </div>
       </section>
 
       <section className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-[var(--border-color)]">
+        <div className="p-4 sm:p-6 border-b border-[var(--border-color)]">
           <h2 className="text-xl font-bold text-[var(--color-primary)]">Recent Activity</h2>
         </div>
         <div className="flex flex-col">
           {activity.length === 0 ? (
-            <p className="p-6 text-[var(--text-secondary)] italic">No recent activity.</p>
+            <p className="p-4 sm:p-6 text-[var(--text-secondary)] italic">No recent activity.</p>
           ) : (
             activity.map((item, index) => (
               <div
                 key={item.id}
-                className={`p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[var(--bg-secondary)] transition-colors ${
+                className={`p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-[var(--bg-secondary)] transition-colors ${
                   index !== activity.length - 1 ? "border-b border-[var(--border-color)]" : ""
                 }`}
               >
