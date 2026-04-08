@@ -52,11 +52,11 @@ export default function Companies() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-8 max-w-7xl pb-12">
+      <div className="flex flex-col gap-6 sm:gap-8 max-w-7xl pb-12">
         <header>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)]">Company Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)]">Company Management</h1>
         </header>
-        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-8 text-center animate-pulse text-[var(--text-secondary)]">
+        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-6 sm:p-8 text-center animate-pulse text-[var(--text-secondary)]">
           Loading companies...
         </div>
       </div>
@@ -64,14 +64,14 @@ export default function Companies() {
   }
 
   if (error) {
-    return <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
+    return <div className="p-6 sm:p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full max-w-7xl pb-12">
-      <header className="flex flex-col md:flex-row justify-between md:items-end gap-4">
+    <div className="flex flex-col gap-6 sm:gap-8 h-full max-w-7xl pb-12">
+      <header className="flex flex-col md:flex-row justify-between md:items-end gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)] tracking-tight">Company Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Company Management</h1>
           <p className="text-[var(--text-secondary)] mt-2">View, verify, and manage employers on the platform.</p>
         </div>
         <input
@@ -87,31 +87,31 @@ export default function Companies() {
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] text-[var(--text-secondary)] text-sm uppercase tracking-wider">
-              <th className="p-4 font-semibold">Company</th>
-              <th className="p-4 font-semibold">Location</th>
-              <th className="p-4 font-semibold text-center">Active Jobs</th>
-              <th className="p-4 font-semibold text-center">Approval</th>
-              <th className="p-4 font-semibold text-center">Status</th>
-              <th className="p-4 font-semibold text-right">Actions</th>
+              <th className="p-3 sm:p-4 font-semibold">Company</th>
+              <th className="p-3 sm:p-4 font-semibold">Location</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Active Jobs</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Approval</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Status</th>
+              <th className="p-3 sm:p-4 font-semibold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-color)]">
             {filteredCompanies.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-8 text-center text-[var(--text-secondary)] italic">
+                <td colSpan="6" className="p-6 sm:p-8 text-center text-[var(--text-secondary)] italic">
                   No companies found.
                 </td>
               </tr>
             ) : (
               filteredCompanies.map((company) => (
                 <tr key={company.id} className="hover:bg-[var(--bg-secondary)] transition-colors">
-                  <td className="p-4">
+                  <td className="p-3 sm:p-4">
                     <div className="font-bold text-[var(--color-primary)]">{company.name}</div>
                     <div className="text-sm text-[var(--text-secondary)] mt-1">{company.email}</div>
                   </td>
-                  <td className="p-4 text-[var(--text-secondary)] font-medium">{company.location || "Remote"}</td>
-                  <td className="p-4 text-center font-bold text-[var(--text-primary)]">{company.job_count ?? 0}</td>
-                  <td className="p-4 text-center">
+                  <td className="p-3 sm:p-4 text-[var(--text-secondary)] font-medium">{company.location || "Remote"}</td>
+                  <td className="p-3 sm:p-4 text-center font-bold text-[var(--text-primary)]">{company.job_count ?? 0}</td>
+                  <td className="p-3 sm:p-4 text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold border ${
                         company.approved
@@ -122,7 +122,7 @@ export default function Companies() {
                       {company.approved ? "Approved" : "Pending"}
                     </span>
                   </td>
-                  <td className="p-4 text-center">
+                  <td className="p-3 sm:p-4 text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold border ${
                         company.status === "active"
@@ -133,7 +133,7 @@ export default function Companies() {
                       {company.status === "active" ? "Active" : "Suspended"}
                     </span>
                   </td>
-                  <td className="p-4 flex justify-end gap-4 items-center">
+                  <td className="p-3 sm:p-4 flex justify-end gap-4 items-center">
                     {!company.approved && (
                       <button
                         onClick={() => handleToggleApprove(company.id, company.approved)}

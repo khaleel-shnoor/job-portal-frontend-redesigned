@@ -46,11 +46,11 @@ export default function Users() {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-8 max-w-7xl pb-12">
+      <div className="flex flex-col gap-6 sm:gap-8 max-w-7xl pb-12">
         <header>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)]">Candidate Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)]">Candidate Management</h1>
         </header>
-        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-8 text-center text-[var(--text-secondary)] animate-pulse">
+        <div className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] p-6 sm:p-8 text-center text-[var(--text-secondary)] animate-pulse">
           Loading candidates...
         </div>
       </div>
@@ -58,14 +58,14 @@ export default function Users() {
   }
 
   if (error) {
-    return <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
+    return <div className="p-6 sm:p-8 text-center text-red-500 bg-red-50 rounded-xl">{error}</div>;
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full max-w-7xl pb-12">
-      <header className="flex flex-col md:flex-row justify-between md:items-end gap-4">
+    <div className="flex flex-col gap-6 sm:gap-8 h-full max-w-7xl pb-12">
+      <header className="flex flex-col md:flex-row justify-between md:items-end gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--color-primary)] tracking-tight">Candidate Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Candidate Management</h1>
           <p className="text-[var(--text-secondary)] mt-2">View profiles and manage candidate accounts.</p>
         </div>
         <input
@@ -81,17 +81,17 @@ export default function Users() {
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)] text-[var(--text-secondary)] text-sm uppercase tracking-wider">
-              <th className="p-4 font-semibold">Candidate</th>
-              <th className="p-4 font-semibold">Title</th>
-              <th className="p-4 font-semibold text-center">Applications</th>
-              <th className="p-4 font-semibold text-center">Status</th>
-              <th className="p-4 font-semibold text-right">Actions</th>
+              <th className="p-3 sm:p-4 font-semibold">Candidate</th>
+              <th className="p-3 sm:p-4 font-semibold">Title</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Applications</th>
+              <th className="p-3 sm:p-4 font-semibold text-center">Status</th>
+              <th className="p-3 sm:p-4 font-semibold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border-color)]">
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-[var(--text-secondary)] italic">
+                <td colSpan="5" className="p-6 sm:p-8 text-center text-[var(--text-secondary)] italic">
                   No candidates found.
                 </td>
               </tr>
@@ -99,13 +99,13 @@ export default function Users() {
               filteredUsers.map((user) => (
                 <Fragment key={user.id}>
                   <tr className="hover:bg-[var(--bg-secondary)] transition-colors group">
-                    <td className="p-4">
+                    <td className="p-3 sm:p-4">
                       <div className="font-bold text-[var(--color-primary)]">{user.name}</div>
                       <div className="text-sm text-[var(--text-secondary)] mt-1">{user.email}</div>
                     </td>
-                    <td className="p-4 text-[var(--text-secondary)] font-medium">{user.title || "Candidate"}</td>
-                    <td className="p-4 text-center font-bold text-[var(--text-primary)]">{user.apps_count}</td>
-                    <td className="p-4 text-center">
+                    <td className="p-3 sm:p-4 text-[var(--text-secondary)] font-medium">{user.title || "Candidate"}</td>
+                    <td className="p-3 sm:p-4 text-center font-bold text-[var(--text-primary)]">{user.apps_count}</td>
+                    <td className="p-3 sm:p-4 text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold border ${
                           user.status === "active"
@@ -116,7 +116,7 @@ export default function Users() {
                         {user.status === "active" ? "Active" : "Suspended"}
                       </span>
                     </td>
-                    <td className="p-4 flex justify-end gap-4 items-center">
+                    <td className="p-3 sm:p-4 flex justify-end gap-4 items-center">
                       <button
                         onClick={() => setExpandedUserId(expandedUserId === user.id ? null : user.id)}
                         className="text-sm font-semibold text-[var(--text-secondary)] hover:text-[var(--color-accent)] transition-colors"
@@ -138,8 +138,8 @@ export default function Users() {
 
                   {expandedUserId === user.id && (
                     <tr className="bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
-                      <td colSpan="5" className="p-6">
-                        <div className="flex flex-col md:flex-row gap-12">
+                      <td colSpan="5" className="p-4 sm:p-6">
+                        <div className="flex flex-col md:flex-row gap-6 md:gap-12">
                           <div className="flex-1">
                             <h4 className="text-xs font-bold text-[var(--color-secondary)] uppercase tracking-wider mb-3">
                               Profile Details
