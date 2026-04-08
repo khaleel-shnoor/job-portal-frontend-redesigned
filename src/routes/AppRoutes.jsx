@@ -60,7 +60,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
-       <Route index element={<Navigate to="/user/jobs" />} />
+          <Route index element={<UserDashboard />} />
           <Route path="jobs" element={<JobSearch />} />
           <Route path="jobs/:id" element={<JobDetails />} />
           <Route path="applications" element={<MyApplications />} />
