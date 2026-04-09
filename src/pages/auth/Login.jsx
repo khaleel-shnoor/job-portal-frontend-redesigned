@@ -48,7 +48,7 @@ const handleSubmit = async (e) => {
       
       <div className="w-full max-w-md bg-[var(--bg-primary)] p-8 rounded-2xl shadow-lg border border-[var(--border-color)]">
         
-        <h2 className="text-2xl font-bold text-center mb-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-[var(--text-primary)]">
           Welcome Back
         </h2>
 
@@ -60,7 +60,7 @@ const handleSubmit = async (e) => {
             <input
               type="email"
               placeholder="Email"
-              className="w-full px-3 py-3 outline-none bg-transparent"
+              className="w-full px-3 py-3 outline-none bg-transparent text-[var(--text-primary)]"
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
             />
@@ -72,7 +72,7 @@ const handleSubmit = async (e) => {
             <input
               type="password"
               placeholder="Password"
-              className="w-full px-3 py-3 outline-none bg-transparent"
+              className="w-full px-3 py-3 outline-none bg-transparent text-[var(--text-primary)]"
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
             />
@@ -80,7 +80,7 @@ const handleSubmit = async (e) => {
 
           {/* Role Select (for demo) */}
           <select
-            className="border border-[var(--border-color)] rounded-lg px-3 py-3 bg-transparent"
+            className="border border-[var(--border-color)] rounded-lg px-3 py-3 bg-transparent text-[var(--text-primary)]"
             onChange={(e) => setForm({ ...form, role: e.target.value })}
           >
             <option value="user">User</option>
@@ -91,7 +91,7 @@ const handleSubmit = async (e) => {
           {/* Button */}
           <button
             type="submit"
-            className="bg-[var(--color-primary)] text-white py-3 rounded-lg font-semibold hover:opacity-90"
+            className="bg-[var(--color-primary)] text-[var(--bg-secondary)] py-3 rounded-lg font-semibold hover:opacity-90"
           >
             Login
           </button>
@@ -104,13 +104,6 @@ const handleSubmit = async (e) => {
             Register
           </Link>
         </p>
-
-        <Link to="/legal/terms" className="text-sm text-center mt-2 block text-[var(--text-secondary)] hover:underline">
-          Terms and Conditions
-        </Link> 
-        <Link to="/legal/privacy" className="text-sm text-center mt-2 block text-[var(--text-secondary)] hover:underline">
-          Privacy Policy
-        </Link>
       </div>
     </div>
   );
