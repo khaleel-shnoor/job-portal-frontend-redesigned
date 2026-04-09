@@ -55,7 +55,7 @@ function ThemeToggle({ scrolled }) {
             onClick={() => setOpen(false)}
           />
           {/* Dropdown */}
-          <div className="absolute right-0 top-10 z-50 bg-white dark:bg-[#1e293b] border border-[var(--border-color)] rounded-xl shadow-lg py-1 min-w-[130px]">
+          <div className="absolute right-0 top-10 z-50 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl shadow-lg py-1 min-w-[130px]">
             {THEME_OPTIONS.map(({ value, icon: OptionIcon, label }) => (
               <button
                 key={value}
@@ -186,7 +186,7 @@ export default function Navbar() {
             })}
 
             {user && (
-              <button onClick={logout} className="flex items-center gap-2 text-red-500">
+              <button onClick={logout} className="flex items-center gap-2 text-red-500 ">
                 <LogOut size={18} />
                 Logout
               </button>
