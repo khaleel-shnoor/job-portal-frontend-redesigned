@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock } from "lucide-react";
 import api from "../../services/api";
 import { mapFrontendToBackend } from "../../utils/roleMap";
-import TermsAndConditions from "../public/Terms";
-import PrivacyPolicy from "../public/Privacy";
+
 
 export default function Register() {
   const navigate = useNavigate();

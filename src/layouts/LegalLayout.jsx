@@ -1,4 +1,4 @@
-// components/LegalLayout.jsx
+
 import React from "react";
 
 const LegalLayout = ({ title, children }) => {

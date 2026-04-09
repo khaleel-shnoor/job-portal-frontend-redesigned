@@ -2,6 +2,14 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { LayoutDashboard, PlusCircle, Briefcase, Users, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import { useTheme } from "../context/ThemeContext"; // adjust path
+import { Sun, Moon, Monitor } from "lucide-react";
+
+const THEME_OPTIONS = [
+  { value: "light",  icon: Sun,     label: "Light"  },
+  { value: "dark",   icon: Moon,    label: "Dark"   },
+  { value: "system", icon: Monitor, label: "System" },
+];
 
 export default function CompanyLayout() {
   const { logout } = useAuth();
@@ -20,15 +28,70 @@ export default function CompanyLayout() {
     { to: "/company/applicants", icon: <Users size={18} />, label: "Applicants" },
   ];
 
+  function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
+  const current = THEME_OPTIONS.find((o) => o.value === theme);
+  const Icon = current?.icon ?? Sun;
+ 
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        title={`Theme: ${current?.label}`}
+        className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--bg-secondary)] transition-colors text-sm"
+      >
+        <Icon size={16} />
+        <span>{current?.label} theme</span>
+      </button>
+ 
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 bottom-10 z-50 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl shadow-lg py-1 min-w-[140px]">
+            {THEME_OPTIONS.map(({ value, icon: OptionIcon, label }) => (
+              <button
+                key={value}
+                onClick={() => { setTheme(value); setOpen(false); }}
+                className={`w-full flex items-center gap-2 px-4 py-2 text-sm transition hover:bg-[var(--bg-secondary)] ${
+                  theme === value
+                    ? "text-[var(--color-primary)] font-semibold"
+                    : "text-[var(--text-primary)]"
+                }`}
+              >
+                <OptionIcon size={14} />
+                {label}
+                {theme === value && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
+                )}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+const { theme, setTheme } = useTheme();
+const cycleTheme = () => {
+  const order = ["light", "dark", "system"];
+  setTheme(order[(order.indexOf(theme) + 1) % order.length]);
+};
+const MobileThemeIcon = THEME_OPTIONS.find(o => o.value === theme)?.icon ?? Sun;
+
   return (
     <div className="flex min-h-screen bg-gray-100">
 
       {/* Mobile topbar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-20 bg-gray-900 text-white flex items-center justify-between px-4 py-3">
         <h1 className="text-lg font-bold">Company Panel</h1>
+        <div className="flex gap-4 items-center">
+        <button onClick={cycleTheme}><MobileThemeIcon size={18} /></button>
         <button onClick={() => setOpen(true)} aria-label="Open menu">
           <Menu size={22} />
         </button>
+        </div>
       </div>
 
       {/* Sidebar */}
@@ -62,6 +125,8 @@ export default function CompanyLayout() {
             </NavLink>
           ))}
         </nav>
+
+        <ThemeToggle />
 
         <button
           onClick={handleLogout}
