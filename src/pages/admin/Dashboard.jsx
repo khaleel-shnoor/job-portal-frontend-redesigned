@@ -38,9 +38,9 @@ export default function AdminDashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)]">Admin Overview</h1>
           <p className="text-[var(--text-secondary)] mt-2">Loading platform stats...</p>
         </header>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] animate-pulse h-28" />
+            <div key={i} className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] animate-pulse h-24 sm:h-28" />
           ))}
         </div>
       </div>
@@ -49,19 +49,20 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl">
+      <div className="p-6 sm:p-8 text-center text-red-500 bg-red-50 rounded-xl">
         {error}
       </div>
     );
   }
 
   const activity = [
-    ...( stats.recentJobs || []).map((job) => ({
+    ...(stats.recentJobs || []).map((job) => ({
       id: `job-${job.id}`,
       user: job.company_name,
       action: "posted a new job:",
       target: job.title,
       time: formatTime(job.created_at),
+      type: "job",
     })),
     ...(stats.recentApplications || []).map((app) => ({
       id: `app-${app.id}`,
@@ -69,56 +70,61 @@ export default function AdminDashboard() {
       action: "applied for",
       target: `${app.job_title} at ${app.company_name}`,
       time: formatTime(app.applied_at),
+      type: "application",
     })),
+  ];
+
+  const statCards = [
+    { label: "Total Candidates", value: stats.candidates, accent: false },
+    { label: "Companies", value: stats.companies, accent: false },
+    { label: "Active Jobs", value: stats.activeJobs, accent: true },
+    { label: "Applications", value: stats.totalApplications, accent: false },
   ];
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8 h-full max-w-6xl pb-12">
       <header>
         <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-primary)] tracking-tight">Admin Overview</h1>
-        <p className="text-[var(--text-secondary)] mt-2">Monitor platform health and recent activities.</p>
+        <p className="text-[var(--text-secondary)] mt-1 sm:mt-2 text-sm sm:text-base">Monitor platform health and recent activities.</p>
       </header>
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Total Candidates</h3>
-          <p className="text-4xl font-black text-[var(--color-primary)]">{stats.candidates}</p>
-        </div>
-        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Companies</h3>
-          <p className="text-4xl font-black text-[var(--color-primary)]">{stats.companies}</p>
-        </div>
-        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Active Jobs</h3>
-          <p className="text-4xl font-black text-[var(--color-accent)]">{stats.activeJobs}</p>
-        </div>
-        <div className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-2">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Applications</h3>
-          <p className="text-4xl font-black text-[var(--color-primary)]">{stats.totalApplications}</p>
-        </div>
+      {/* Stats grid — 2 cols on mobile, 4 on lg */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 sm:gap-6">
+        {statCards.map(({ label, value, accent }) => (
+          <div
+            key={label}
+            className="bg-[var(--bg-primary)] p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col gap-1 sm:gap-2"
+          >
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[var(--text-secondary)] leading-tight">
+              {label}
+            </h3>
+            <p className={`text-3xl sm:text-4xl font-black ${accent ? "text-[var(--color-accent)]" : "text-[var(--color-primary)]"}`}>
+              {value}
+            </p>
+          </div>
+        ))}
       </section>
 
+      {/* Activity feed */}
       <section className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border-color)] shadow-sm overflow-hidden flex flex-col">
         <div className="p-4 sm:p-6 border-b border-[var(--border-color)]">
-          <h2 className="text-xl font-bold text-[var(--color-primary)]">Recent Activity</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-[var(--color-primary)]">Recent Activity</h2>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col divide-y divide-[var(--border-color)]">
           {activity.length === 0 ? (
-            <p className="p-4 sm:p-6 text-[var(--text-secondary)] italic">No recent activity.</p>
+            <p className="p-4 sm:p-6 text-[var(--text-secondary)] italic text-sm">No recent activity.</p>
           ) : (
-            activity.map((item, index) => (
+            activity.map((item) => (
               <div
                 key={item.id}
-                className={`p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-[var(--bg-secondary)] transition-colors ${
-                  index !== activity.length - 1 ? "border-b border-[var(--border-color)]" : ""
-                }`}
+                className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 hover:bg-[var(--bg-secondary)] transition-colors"
               >
-                <p className="text-[var(--text-primary)] text-sm md:text-base leading-relaxed">
+                <p className="text-[var(--text-primary)] text-sm leading-relaxed">
                   <span className="font-bold text-[var(--color-primary)]">{item.user}</span>{" "}
-                  {item.action}{" "}
+                  <span className="text-[var(--text-secondary)]">{item.action}</span>{" "}
                   <span className="font-semibold">{item.target}</span>
                 </p>
-                <span className="text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap bg-[var(--bg-secondary)] px-3 py-1 rounded-full border border-[var(--border-color)]">
+                <span className="text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap bg-[var(--bg-secondary)] px-3 py-1 rounded-full border border-[var(--border-color)] self-start sm:self-auto">
                   {item.time}
                 </span>
               </div>

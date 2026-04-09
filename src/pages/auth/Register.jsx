@@ -4,6 +4,7 @@ import { User, Mail, Lock } from "lucide-react";
 import api from "../../services/api";
 import { mapFrontendToBackend } from "../../utils/roleMap";
 
+
 export default function Register() {
   const navigate = useNavigate();
 
@@ -102,6 +103,14 @@ const handleSubmit = async (e) => {
             Login
           </Link>
         </p>
+
+        <Link to="/legal/terms" className="text-sm text-center mt-2 block text-[var(--text-secondary)] hover:underline">
+          Terms and Conditions
+        </Link> 
+        <Link to="/legal/privacy" className="text-sm text-center mt-2 block text-[var(--text-secondary)] hover:underline">
+          Privacy Policy
+        </Link>
+
       </div>
     </div>
   );
