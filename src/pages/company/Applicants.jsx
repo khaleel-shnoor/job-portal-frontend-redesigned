@@ -13,6 +13,7 @@ const Applicants = () => {
   const [selectedJob, setSelectedJob] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +64,21 @@ const Applicants = () => {
       alert(err.response?.data?.message || "Failed to update status");
     }
   };
+
+  const fetchInterviewResult = async (app) => {
+  try {
+    const res = await api.get(`company/interview-results/${app.user_id}`);
+
+    setResults((prev) => ({
+      ...prev,
+      [app.id]: res.data,
+    }));
+
+    console.log("Interview result:", res.data);
+  } catch (err) {
+    alert("No result found yet");
+  }
+};
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -264,14 +280,31 @@ const Applicants = () => {
                       <Eye className="h-4 w-4" /> Interview
                     </button>
                   )}
-                  {app.status === "interview" && (
-                    <button
-                      onClick={() => updateStatus(app.id, "hired")}
-                      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition"
-                    >
-                      <UserCheck className="h-4 w-4" /> Hire
-                    </button>
-                  )}
+                 {app.status === "interview" && (
+  <>
+    <button
+      onClick={() => fetchInterviewResult(app)}
+      className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition"
+    >
+      Fetch Result
+    </button>
+
+    {/* Show Result */}
+    {results[app.id] && (
+  <div className="text-sm bg-[var(--bg-primary)] border rounded p-2 mt-1">
+    <p><strong>Score:</strong> {results[app.id].score}/10</p>
+  </div>
+)}
+
+    {/* Hire button */}
+                <button
+                  onClick={() => updateStatus(app.id, "hired")}
+                  className="flex items-center gap-1 px-3 py-1.5 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200 transition"
+                >
+                  <UserCheck className="h-4 w-4" /> Hire
+                </button>
+              </>
+            )}
                   {app.status !== "rejected" && app.status !== "hired" && (
                     <button
                       onClick={() => updateStatus(app.id, "rejected")}
