@@ -12,6 +12,7 @@ const Applicants = () => {
   const [error, setError] = useState("");
   const [selectedJob, setSelectedJob] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedScore, setSelectedScore] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState({});
 
@@ -91,6 +92,25 @@ const Applicants = () => {
     return styles[status] || "bg-gray-100 text-gray-800";
   };
 
+  const handleScoreFilterChange = (e) => {
+    const val = e.target.value;
+    setSelectedScore(val);
+
+    if (val === "above70") {
+      applications.forEach(async (app) => {
+        // Auto-fetch missing scores in the background for active interviewees
+        if (app.status === "interview" && !results[app.id]) {
+          try {
+            const res = await api.get(`company/interview-results/${app.user_id}`);
+            setResults((prev) => ({ ...prev, [app.id]: res.data }));
+          } catch (err) {
+            // Silently ignore if result is not found yet
+          }
+        }
+      });
+    }
+  };
+
   const filteredApplications = applications.filter((app) => {
     const matchesJob =
       selectedJob === "all" || String(app.job_id) === String(selectedJob);
@@ -101,7 +121,13 @@ const Applicants = () => {
       (app.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (app.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (app.job_title || "").toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesJob && matchesStatus && matchesSearch;
+
+    const score = results[app.id]?.score;
+    const matchesScore =
+      selectedScore === "all" ||
+      (selectedScore === "above70" && score !== undefined && score >= 7);
+
+    return matchesJob && matchesStatus && matchesSearch && matchesScore;
   });
 
   if (loading) {
@@ -127,9 +153,9 @@ const Applicants = () => {
         </h1>
       </div>
 
-      {/* Filter bar — 1 col mobile, 2 col tablet, 3 col desktop */}
+      {/* Filter bar — 1 col mobile, 2 col tablet, 4 col desktop */}
       <div className="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] p-4 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
           {/* Search */}
           <div className="relative sm:col-span-2 lg:col-span-1">
@@ -175,6 +201,20 @@ const Applicants = () => {
               <option value="interview">Interview</option>
               <option value="hired">Hired</option>
               <option value="rejected">Rejected</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-[var(--text-secondary)] pointer-events-none" />
+          </div>
+
+          {/* Score filter */}
+          <div className="relative">
+            <Filter className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-secondary)]" />
+            <select
+              value={selectedScore}
+              onChange={handleScoreFilterChange}
+              className="w-full pl-9 pr-8 py-2 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] appearance-none"
+            >
+              <option value="all">All Scores</option>
+              <option value="above70">Score &ge; 70%</option>
             </select>
             <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-[var(--text-secondary)] pointer-events-none" />
           </div>
