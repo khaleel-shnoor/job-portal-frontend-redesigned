@@ -112,7 +112,7 @@ export default function Landing() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-6 text-center bg-[var(--color-primary)] text-white">
+      <section className="py-16 px-6 text-center bg-[var(--color-primary)] text-[var(--bg-secondary)]">
         <h2 className="text-3xl font-bold mb-4">Take the Next Step in Your Career</h2>
         <p className="mb-6 opacity-90">Join thousands of professionals and companies today.</p>
         <a
@@ -143,10 +143,10 @@ export default function Landing() {
 
           {/* Brand */}
           <div className="lg:col-span-1 bg-[var(--color-primary)] p-6 rounded-2xl shadow-md">
-            <h2 className="text-2xl font-bold text-white tracking-tight mb-4">
+            <h2 className="text-2xl font-bold text-[var(--bg-secondary)] tracking-tight mb-4">
               Shnoor International
             </h2>
-            <p className="text-sm text-white/90 leading-relaxed">
+            <p className="text-sm text-[var(--bg-secondary)] leading-relaxed">
               Connecting top talent with world-class companies. Your next big career move starts right here.
             </p>
           </div>

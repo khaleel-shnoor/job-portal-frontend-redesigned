@@ -37,14 +37,14 @@ const handleSubmit = async (e) => {
       
       <div className="w-full max-w-md bg-[var(--bg-primary)] p-8 rounded-2xl shadow-lg border border-[var(--border-color)]">
         
-        <h2 className="text-2xl font-bold text-center mb-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-[var(--text-primary)]">
           Create Account
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
           {/* Name */}
-          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3">
+          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3 text-[var(--text-primary)]">
             <User size={18} className="text-[var(--text-secondary)]" />
             <input
               type="text"
@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
           </div>
 
           {/* Email */}
-          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3">
+          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3 text-[var(--text-primary)]">
             <Mail size={18} className="text-[var(--text-secondary)]" />
             <input
               type="email"
@@ -68,7 +68,7 @@ const handleSubmit = async (e) => {
           </div>
 
           {/* Password */}
-          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3">
+          <div className="flex items-center border border-[var(--border-color)] rounded-lg px-3 text-[var(--text-primary)]">
             <Lock size={18} className="text-[var(--text-secondary)]" />
             <input
               type="password"
@@ -80,7 +80,7 @@ const handleSubmit = async (e) => {
           </div>
 
           <select
-          className="border border-[var(--border-color)] rounded-lg px-3 py-3 bg-transparent"
+          className="border border-[var(--border-color)] rounded-lg px-3 py-3 bg-transparent text-[var(--text-primary)]"
           onChange={(e) => setForm({ ...form, role: e.target.value })}
         >
           <option value="user">User</option>
@@ -90,7 +90,7 @@ const handleSubmit = async (e) => {
           {/* Button */}
           <button
             type="submit"
-            className="bg-[var(--color-primary)] text-white py-3 rounded-lg font-semibold hover:opacity-90"
+            className="bg-[var(--color-primary)] text-[var(--bg-secondary)] py-3 rounded-lg font-semibold hover:opacity-90"
           >
             Register
           </button>
